@@ -1,0 +1,29 @@
+import sys
+sys.path.append('src')
+
+from textSummarizer.logging import logger
+from textSummarizer.pipeline.stage_01_data_ingestion import DataIngestionTrainingPipeline
+from textSummarizer.pipeline.stage_02_data_validation import DataValidationTrainingPipeline
+
+
+STAGE_NAME = "Data Ingestion stage"
+
+try:
+    logger.info(">>>> stage {} started <<<<".format(STAGE_NAME))
+    data_ingestion = DataIngestionTrainingPipeline()
+    data_ingestion.main()
+    logger.info(">>>> stage {} completed <<<< \n\n ==================".format(STAGE_NAME))
+except Exception as e:
+    logger.exception(e)
+    raise e
+
+STAGE_NAME = "Data Validation stage"
+
+try:
+    logger.info(">>>> stage {} started <<<<".format(STAGE_NAME))
+    data_validation = DataValidationTrainingPipeline()
+    data_validation.main()
+    logger.info(">>>> stage {} completed <<<< \n\n ==================".format(STAGE_NAME))
+except Exception as e:
+    logger.exception(e)
+    raise e
