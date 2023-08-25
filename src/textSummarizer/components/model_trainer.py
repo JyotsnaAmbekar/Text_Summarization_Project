@@ -9,7 +9,7 @@ import os
 class ModelTrainer:
     def __init__(self, config: ModelTrainerConfig):
         self.config = config
-    
+    torch.cuda.empty_cache()
     def train(self):
         # model_ckpt = 'google/pegasus-cnn_dailymail'
         device = "cuda" if torch.cuda.is_available() else "cpu"

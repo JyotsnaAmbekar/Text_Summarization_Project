@@ -19,7 +19,7 @@ class ModelEvaluation:
 
     
     def calculate_metric_on_test_ds(self,dataset, metric, model, tokenizer, 
-                               batch_size=16, device="cuda" if torch.cuda.is_available() else "cpu", 
+                               batch_size=1, device="cuda" if torch.cuda.is_available() else "cpu", 
                                column_text="article", 
                                column_summary="highlights"):
         article_batches = list(self.generate_batch_sized_chunks(dataset[column_text], batch_size))
@@ -28,12 +28,12 @@ class ModelEvaluation:
         for article_batch, target_batch in tqdm(
             zip(article_batches, target_batches), total=len(article_batches)):
             
-            inputs = tokenizer(article_batch, max_length=1024,  truncation=True, 
+            inputs = tokenizer(article_batch, max_length=800,  truncation=True, 
                             padding="max_length", return_tensors="pt")
             
             summaries = model.generate(input_ids=inputs["input_ids"].to(device),
                             attention_mask=inputs["attention_mask"].to(device), 
-                            length_penalty=0.8, num_beams=8, max_length=128)
+                            length_penalty=0.8, num_beams=8, max_length=100)
             ''' parameter for length penalty ensures that the model does not generate sequences that are too long. '''
             
             # Finally, we decode the generated texts, 
@@ -66,7 +66,7 @@ class ModelEvaluation:
         rouge_metric = load_metric('rouge')
 
         score = self.calculate_metric_on_test_ds(
-        dataset_samsum_pt['test'][0:10], rouge_metric, model_pegasus, tokenizer, batch_size = 2, column_text = 'dialogue', column_summary= 'summary'
+        dataset_samsum_pt['test'][0:10], rouge_metric, model_pegasus, tokenizer, batch_size = 1, column_text = 'dialogue', column_summary= 'summary'
             )
 
         rouge_dict = dict((rn, score[rn].mid.fmeasure ) for rn in rouge_names )
